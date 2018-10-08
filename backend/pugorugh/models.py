@@ -24,7 +24,7 @@ class Dog(models.Model):
     age = models.IntegerField(help_text='Months in number')
     gender = models.CharField(
         max_length=1,
-        help_text='"m" for male, "f" for female, "u" for unknown')
+        help_text='[M]ale, [F]emale, [U]nknown')
     size = models.CharField(
         max_length=2,
         help_text='"s" for small, "m" for medium, "l" for large, '
