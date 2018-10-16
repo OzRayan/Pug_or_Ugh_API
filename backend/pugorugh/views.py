@@ -1,9 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import permissions
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 
-from .serializers import UserSerializer, DogSerializer
-from .models import Dog
+from .serializers import UserSerializer, DogSerializer, UserPrefSerializer
+from .models import Dog, UserDog, UserPref
 
 
 class UserRegisterView(CreateAPIView):
@@ -15,3 +15,11 @@ class UserRegisterView(CreateAPIView):
 # class ListDogView(ListAPIView):
 #     queryset = Dog.objects().all()
 #     serializer_class = DogSerializer
+
+
+class UserPrefView(RetrieveUpdateAPIView):
+    queryset = UserPref.objects.all()
+    serializer_class = UserPrefSerializer
+
+    def get_object(self):
+        return self.get_queryset().get(user=self.request.user)

@@ -24,11 +24,10 @@ class Dog(models.Model):
     age = models.IntegerField(help_text='Months in number')
     gender = models.CharField(
         max_length=1,
-        help_text='[M]ale, [F]emale, [U]nknown')
+        help_text='[M]ale [F]emale [U]nknown')
     size = models.CharField(
         max_length=2,
-        help_text='"s" for small, "m" for medium, "l" for large, '
-                  '"xl" for extra large, "u" for unknown')
+        help_text='[S]mall [M]edium [L]arge [XL]arge [U]nknown')
 
     def __str__(self):
         return self.name
@@ -38,7 +37,7 @@ class UserDog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     dog = models.ForeignKey(Dog, on_delete=models.CASCADE)
     status = models.CharField(
-        max_length=1, help_text='"l" for liked, "d" for disliked',
+        max_length=1, help_text='[L]iked [D]isliked',
         default='u')
 
     def __str__(self):
@@ -52,19 +51,17 @@ class UserPref(models.Model):
         default='B,Y,A,S',
         choices=CHOICES['age'],
         max_length=7,
-        help_text='"b" for baby, "y" for young, '
-                  '"a" for adult, "s" for senior')
+        help_text='[B]aby [Y]oung [A]dult [S]enior')
     gender = models.CharField(
         default='M,F',
         choices=CHOICES['gender'],
         max_length=3,
-        help_text='"m" for male, "f" for female')
+        help_text='"[M]ale [F]emale')
     size = models.CharField(
         default='S,M,L,XL',
         choices=CHOICES['size'],
         max_length=8,
-        help_text='"s" for small, "m" for medium,'
-                  '"l" for large, "xl" for extra')
+        help_text='[S]mall [M]edium [L]arge [XL]arge')
 
     def __str__(self):
         return "{}'s dog preferences".format(self.user.username.title())
