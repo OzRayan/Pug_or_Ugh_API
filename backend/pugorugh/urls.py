@@ -16,7 +16,6 @@ urlpatterns = format_suffix_patterns([
             url='/static/icons/favicon.ico',
             permanent=True
         )),
-    # url(r'^api/dog/$', ListDogView.as_view(), name='dog_list'),
     url(r'^api/user/preferences/$',
         UserPrefView.as_view(),
         name='user_pref'),
