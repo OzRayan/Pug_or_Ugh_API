@@ -3,16 +3,16 @@ from django.db import models
 
 
 CHOICES = {
-    'age': (('B', 'baby'),
-            ('Y', 'young'),
-            ('A', 'adult'),
-            ('S', 'senior')),
-    'gender': (('M', 'male'),
-               ('F', 'female')),
-    'size': (('S', 'small'),
-             ('M', 'medium'),
-             ('L', 'large'),
-             ('XL', 'extra large'))
+    'age': (('b', 'baby'),
+            ('y', 'young'),
+            ('a', 'adult'),
+            ('s', 'senior')),
+    'gender': (('m', 'male'),
+               ('f', 'female')),
+    'size': (('s', 'small'),
+             ('m', 'medium'),
+             ('l', 'large'),
+             ('xl', 'extra large'))
 }
 
 
@@ -48,17 +48,17 @@ class UserDog(models.Model):
 class UserPref(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     age = models.CharField(
-        default='B,Y,A,S',
+        default='b,y,a,s',
         choices=CHOICES['age'],
         max_length=7,
         help_text='[B]aby [Y]oung [A]dult [S]enior')
     gender = models.CharField(
-        default='M,F',
+        default='m,f',
         choices=CHOICES['gender'],
         max_length=3,
         help_text='"[M]ale [F]emale')
     size = models.CharField(
-        default='S,M,L,XL',
+        default='s,m,l,xl',
         choices=CHOICES['size'],
         max_length=8,
         help_text='[S]mall [M]edium [L]arge [XL]arge')

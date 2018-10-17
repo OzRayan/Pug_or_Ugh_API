@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
 class DogSerializer(serializers.ModelSerializer):
     class Meta:
         fields = (
-            'id'
+            'id',
             'name',
             'image_filename',
             'breed',
