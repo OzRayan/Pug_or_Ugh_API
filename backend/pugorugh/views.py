@@ -27,3 +27,8 @@ class RetrieveNextDogView(RetrieveAPIView):
     serializer_class = DogSerializer
 
 
+class RetrieveUpdateDogView(RetrieveUpdateAPIView):
+    queryset = Dog.objects.all()
+    serializer_class = DogSerializer
+
+
