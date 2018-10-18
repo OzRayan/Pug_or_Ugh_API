@@ -31,4 +31,5 @@ class RetrieveUpdateDogView(RetrieveUpdateAPIView):
     queryset = Dog.objects.all()
     serializer_class = DogSerializer
 
-
+    def get_queryset(self):
+        pass
