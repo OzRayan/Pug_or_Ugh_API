@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Dog, UserPref
+from .models import Dog, UserDog, UserPref
 
 
 class UserSerializer(serializers.ModelSerializer):
