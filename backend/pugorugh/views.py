@@ -26,4 +26,8 @@ class RetrieveNextDogView(RetrieveAPIView):
     queryset = UserDog.objects.all()
     serializer_class = DogSerializer
 
+    def get_object(self):
+        return self.queryset.filter(user=self.request.user,
+                                    status=self.kwargs.get('status_pk'))
+
 
