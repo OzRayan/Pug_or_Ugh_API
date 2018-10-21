@@ -46,7 +46,9 @@ class UserDog(models.Model):
 
 
 class UserPref(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User,
+                                on_delete=models.CASCADE,
+                                related_name='preferences')
     age = models.CharField(
         default='b,y,a,s',
         choices=CHOICES['age'],
