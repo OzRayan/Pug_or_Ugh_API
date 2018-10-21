@@ -18,8 +18,8 @@ urlpatterns = format_suffix_patterns([
         )),
     url(r'^api/user/preferences/$',
         UserPrefView.as_view(),
-        name='user_pref'),
-    url(r'^api/dog/(?P<pk>\d+)/(?P<status>\w+)/next',
+        name='preferences'),
+    url(r'^api/dog/(?P<pk>\d+)/undecided/next/$',
         RetrieveNextDogView.as_view(), name='next'),
     url(r'^$', TemplateView.as_view(template_name='index.html'))
 ])

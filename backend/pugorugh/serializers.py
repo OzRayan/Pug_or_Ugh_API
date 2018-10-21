@@ -1,11 +1,11 @@
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
+from rest_framework.serializers import CharField, ModelSerializer
 
 from .models import Dog, UserDog, UserPref
 
 
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+class UserSerializer(ModelSerializer):
+    password = CharField(write_only=True)
 
     def create(self, validated_data):
         user = get_user_model().objects.create(
@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
 
 
-class DogSerializer(serializers.ModelSerializer):
+class DogSerializer(ModelSerializer):
     class Meta:
         fields = (
             'id',
@@ -33,7 +33,17 @@ class DogSerializer(serializers.ModelSerializer):
         model = Dog
 
 
-class UserPrefSerializer(serializers.ModelSerializer):
+class UserDogSerializer(ModelSerializer):
+    class Meta:
+        fields = (
+            'user',
+            'dog',
+            'status'
+        )
+        model = UserDog
+
+
+class UserPrefSerializer(ModelSerializer):
     class Meta:
         fields = (
             'age',
