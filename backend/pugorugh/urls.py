@@ -5,7 +5,8 @@ from django.views.generic.base import RedirectView
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .views import UserRegisterView, UserPrefView, RetrieveNextDogView
+from .views import (UserRegisterView, UserPrefView, RetrieveNextDogView,
+                    RetrieveUpdateDogView)
 
 # API endpoints
 urlpatterns = format_suffix_patterns([
@@ -18,8 +19,6 @@ urlpatterns = format_suffix_patterns([
         )),
     url(r'^api/user/preferences/$',
         UserPrefView.as_view(),
-        name='preferences'),
-    url(r'^api/dog/(?P<pk>\d+)/undecided/next/$',
-        RetrieveNextDogView.as_view(), name='next'),
+        name='user_pref'),
     url(r'^$', TemplateView.as_view(template_name='index.html'))
 ])

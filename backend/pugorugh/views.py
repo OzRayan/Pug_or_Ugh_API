@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from rest_framework import permissions
-from rest_framework.generics import (CreateAPIView, RetrieveAPIView,
-                                     RetrieveUpdateAPIView, UpdateAPIView)
+from rest_framework.generics import (CreateAPIView, RetrieveAPIView, UpdateAPIView,
+                                     RetrieveUpdateAPIView)
 
 from .serializers import UserSerializer, DogSerializer, UserPrefSerializer
 from .models import Dog, UserDog, UserPref
@@ -31,5 +31,3 @@ class UpdateDogView(UpdateAPIView):
     queryset = Dog.objects.all()
     serializer_class = DogSerializer
 
-    def get_queryset(self):
-        pass
