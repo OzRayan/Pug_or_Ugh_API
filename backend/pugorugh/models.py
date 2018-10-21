@@ -40,6 +40,9 @@ class UserDog(models.Model):
         max_length=1, help_text='[L]iked [D]isliked',
         default='u')
 
+    class Meta:
+        unique_together = ['user', 'dog']
+
     def __str__(self):
         return 'Dog: {}, User: {}'.format(self.dog.name.title(),
                                           self.user.username.title())
