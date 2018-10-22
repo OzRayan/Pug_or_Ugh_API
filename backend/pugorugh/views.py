@@ -41,32 +41,44 @@ class NextDogView(RetrieveAPIView):
             age_list.append(list(range(60-120)))
         return age_list
 
-    def get_queryset(self):
-        user_preferences = UserPref.objects.get(user=self.request.user)
-        if self.kwargs['status'] == 'liked':
-            status = 'l'
-        if self.kwargs['status'] == 'disliked':
-            status = 'd'
-        if self.kwargs['status'] == 'undecided':
-            status = 'u'
+    # def get_queryset(self):
+    #     user_preferences = UserPref.objects.get(
+    #         user=self.request.user)
+    #
+    #     age_list = self.age_range(user_preferences.age.split(','))
+    #     query = Dog.objects.filter(
+    #         age__in=age_list,
+    #         gender__in=user_preferences.gender.split(','),
+    #         size__in=user_preferences.size.split(',')
+    #     ).order_by('pk')
+    #
+    #     for dog in query:
+    #         obj, exists = UserDog.objects.get_or_create(
+    #             user=self.request.user,
+    #             dog=dog,
+    #             defaults='u'
+    #         )
+    #         if obj:
+    #             obj.save()
+    #
+    #     status = ''
+    #     if self.kwargs['status'] == 'liked':
+    #         status = 'l'
+    #     if self.kwargs['status'] == 'disliked':
+    #         status = 'd'
+    #     if self.kwargs['status'] == 'undecided':
+    #         status = 'u'
+    #
+    #     return self.queryset.filter(user=self.request.user, status=status)
 
-        age_list = self.age_range(user_preferences.age.split(','))
-        queryset = Dog.objects.filter(
-            age__in=age_list,
-            gender__in=user_preferences.gender.split(','),
-            size__in=user_preferences.size.split(','),
-            userdog__status=status,
-            userdog__user=self.request.user
-        ).order_by('pk')
-        return queryset
-
-    def get_object(self):
-        pk = self.kwargs['pk']
-        dog = self.get_queryset().filter(id=pk)
-        if dog:
-            return dog
-        else:
-            return self.get_queryset().first()
+    # def get_object(self):
+    #
+    #     pk = int(self.kwargs['pk'])
+    #     queryset = self.get_queryset().filter(id__gt=pk).first()
+    #     if queryset:
+    #         return queryset
+    #     else:
+    #         return self.get_queryset().first()
 
 
 class StatusDogView(UpdateAPIView):
