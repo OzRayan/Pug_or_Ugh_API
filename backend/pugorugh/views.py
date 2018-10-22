@@ -26,55 +26,43 @@ class UserPrefView(RetrieveUpdateAPIView):
 class NextDogView(RetrieveAPIView):
     serializer_class = DogSerializer
 
-    @staticmethod
-    def age_range(user_preferences):
-        age_list = []
-        if 'b' in user_preferences:
-            age_list.extend(list(range(0, 3)))
-        if 'y' in user_preferences:
-            age_list.extend(list(range(3, 11)))
-        if 'a' in user_preferences:
-            age_list.extend(list(range(11, 60)))
-        if 's' in user_preferences:
-            age_list.extend(list(range(60, 120)))
-        return age_list
-
     def get_queryset(self):
-        user_preferences = UserPref.objects.get(
-            user=self.request.user)
+        user = self.request.user
+        user_preferences = UserPref.objects.get(user=user)
+        age_list = []
+        pref_age = user_preferences.age.split(',')
 
-        age_list = self.age_range(user_preferences.age.split(','))
+        if 'b' in pref_age:
+            age_list.extend(list(range(0, 3)))
+        if 'y' in pref_age:
+            age_list.extend(list(range(3, 11)))
+        if 'a' in pref_age:
+            age_list.extend(list(range(11, 60)))
+        if 's' in pref_age:
+            age_list.extend(list(range(60, 120)))
+
         query = Dog.objects.filter(
             age__in=age_list,
             gender__in=user_preferences.gender.split(','),
             size__in=user_preferences.size.split(',')
         ).order_by('pk')
 
-        for dog in query:
-            UserDog(
-                user=self.request.user,
-                dog=dog,
-                status='u'
-            ).save()
-
-        status = ''
-        if self.kwargs['status'] == 'liked':
-            status = 'l'
-        if self.kwargs['status'] == 'disliked':
-            status = 'd'
-        if self.kwargs['status'] == 'undecided':
-            status = 'u'
-
-        return query.filter(userdog__user_id=self.request.user.id,
-                            userdog__status=status)
+        [UserDog(user=user, dog=dog, status='u').save() for dog in query]
+        status = self.kwargs['status'][0]
+        # print('############')
+        # print(self.kwargs['status'][0])
+        # print('############')
+        queryset = query.filter(userdog__user_id=user.id,
+                                userdog__status=status)
+        return queryset
 
     def get_object(self):
         pk = int(self.kwargs['pk'])
-        queryset = self.get_queryset().filter(id__gt=pk).first()
+        queryset = self.get_queryset().filter(id__gt=pk)[0]
         if queryset:
             return queryset
         else:
-            return self.get_queryset().first()
+            return self.get_queryset()[0]
 
 
 class StatusDogView(UpdateAPIView):

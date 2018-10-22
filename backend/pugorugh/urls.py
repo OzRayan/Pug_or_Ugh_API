@@ -20,7 +20,7 @@ urlpatterns = format_suffix_patterns([
 
     url(r'^api/user/preferences/$', UserPrefView.as_view(),
         name='preferences'),
-    url(r'^api/dog/(?P<pk>(-)?\d+)/(?P<status>liked|disliked|undecided)/next/$',
+    url(r'^api/dog/(?P<pk>(-)?\d+)/(?P<status>undecided|liked|disliked)/next/$',
         NextDogView.as_view(),
         name='next'),
 ])
