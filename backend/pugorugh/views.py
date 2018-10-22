@@ -69,7 +69,6 @@ class NextDogView(RetrieveAPIView):
                             userdog__status=status)
 
     def get_object(self):
-
         pk = int(self.kwargs['pk'])
         queryset = self.get_queryset().filter(id__gt=pk).first()
         if queryset:
