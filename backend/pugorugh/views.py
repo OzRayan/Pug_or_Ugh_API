@@ -28,57 +28,54 @@ class NextDogView(RetrieveAPIView):
 
     @staticmethod
     def age_range(user_preferences):
-        """Takes a list of desired ages and uses the age constants to return
-        a list of integers"""
         age_list = []
         if 'b' in user_preferences:
-            age_list.append(list(range(0-3)))
+            age_list.extend(list(range(0, 3)))
         if 'y' in user_preferences:
-            age_list.append(list(range(3-11)))
+            age_list.extend(list(range(3, 11)))
         if 'a' in user_preferences:
-            age_list.append(list(range(11-60)))
+            age_list.extend(list(range(11, 60)))
         if 's' in user_preferences:
-            age_list.append(list(range(60-120)))
+            age_list.extend(list(range(60, 120)))
         return age_list
 
-    # def get_queryset(self):
-    #     user_preferences = UserPref.objects.get(
-    #         user=self.request.user)
-    #
-    #     age_list = self.age_range(user_preferences.age.split(','))
-    #     query = Dog.objects.filter(
-    #         age__in=age_list,
-    #         gender__in=user_preferences.gender.split(','),
-    #         size__in=user_preferences.size.split(',')
-    #     ).order_by('pk')
-    #
-    #     for dog in query:
-    #         obj, exists = UserDog.objects.get_or_create(
-    #             user=self.request.user,
-    #             dog=dog,
-    #             defaults='u'
-    #         )
-    #         if obj:
-    #             obj.save()
-    #
-    #     status = ''
-    #     if self.kwargs['status'] == 'liked':
-    #         status = 'l'
-    #     if self.kwargs['status'] == 'disliked':
-    #         status = 'd'
-    #     if self.kwargs['status'] == 'undecided':
-    #         status = 'u'
-    #
-    #     return self.queryset.filter(user=self.request.user, status=status)
+    def get_queryset(self):
+        user_preferences = UserPref.objects.get(
+            user=self.request.user)
 
-    # def get_object(self):
-    #
-    #     pk = int(self.kwargs['pk'])
-    #     queryset = self.get_queryset().filter(id__gt=pk).first()
-    #     if queryset:
-    #         return queryset
-    #     else:
-    #         return self.get_queryset().first()
+        age_list = self.age_range(user_preferences.age.split(','))
+        query = Dog.objects.filter(
+            age__in=age_list,
+            gender__in=user_preferences.gender.split(','),
+            size__in=user_preferences.size.split(',')
+        ).order_by('pk')
+
+        for dog in query:
+            UserDog(
+                user=self.request.user,
+                dog=dog,
+                status='u'
+            ).save()
+
+        status = ''
+        if self.kwargs['status'] == 'liked':
+            status = 'l'
+        if self.kwargs['status'] == 'disliked':
+            status = 'd'
+        if self.kwargs['status'] == 'undecided':
+            status = 'u'
+
+        return query.filter(userdog__user_id=self.request.user.id,
+                            userdog__status=status)
+
+    def get_object(self):
+
+        pk = int(self.kwargs['pk'])
+        queryset = self.get_queryset().filter(id__gt=pk).first()
+        if queryset:
+            return queryset
+        else:
+            return self.get_queryset().first()
 
 
 class StatusDogView(UpdateAPIView):
