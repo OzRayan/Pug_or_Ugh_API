@@ -23,7 +23,17 @@ class UserSerializer(ModelSerializer):
         user.save()
 
         # Prepares preferences for user
-        UserPref(user=user).save()
+        obj, exists = UserPref.objects.get_or_create(
+            user=user,
+            defaults={
+                'user': self.request.user,
+                'age': 'b,y,a,s',
+                'gender': 'm,f',
+                'size': 's,m,l,xl'
+            }
+        )
+        if obj:
+            obj.save()
 
         return user
 
