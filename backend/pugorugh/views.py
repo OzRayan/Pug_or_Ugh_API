@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.response import Response
 from rest_framework import permissions
@@ -35,7 +36,13 @@ class UserPrefView(RetrieveUpdateAPIView):
         """get_object method
         :return - user preferences object
         """
-        return self.get_queryset().get(user=self.request.user)
+        queries = self.get_queryset().get(user=self.request.user)
+        # print('############')
+        # print(queries.age)
+        # print(queries.gender)
+        # print(queries.size)
+        # print('############')
+        return queries
 
 
 class NextDogView(RetrieveAPIView):
@@ -57,27 +64,37 @@ class NextDogView(RetrieveAPIView):
         pref_age = user_preferences.age.split(',')
 
         if 'b' in pref_age:
-            age_list.extend(list(range(0, 3)))
+            age_list.extend(list(range(0, 4)))
         if 'y' in pref_age:
-            age_list.extend(list(range(3, 11)))
+            age_list.extend(list(range(4, 12)))
         if 'a' in pref_age:
-            age_list.extend(list(range(11, 60)))
+            age_list.extend(list(range(12, 61)))
         if 's' in pref_age:
-            age_list.extend(list(range(60, 120)))
+            age_list.extend(list(range(61, 121)))
 
-        query = Dog.objects.filter(
+        queries = Dog.objects.filter(
             age__in=age_list,
             gender__in=user_preferences.gender.split(','),
             size__in=user_preferences.size.split(',')
         ).order_by('pk')
 
-        [UserDog(user=user, dog=dog, status='u').save() for dog in query]
+        for dog in queries:
+            obj = UserDog(user=user, dog=dog)
+            # print('############')
+            # print(obj.status)
+            # print('############')
+            obj.status = 'u'
+            # print('############')
+            # print(obj.status)
+            # print('############')
+            obj.save()
+
         status = self.kwargs['status'][0]
         # print('############')
         # print(self.kwargs['status'][0])
         # print('############')
-        queryset = query.filter(userdog__user_id=user.id,
-                                userdog__status=status)
+        queryset = queries.filter(userdog__user_id=user.id,
+                                  userdog__status=status).order_by('pk')
         return queryset
 
     def get_object(self):
@@ -87,27 +104,45 @@ class NextDogView(RetrieveAPIView):
                   else
                     -first dog object
         """
-        pk = int(self.kwargs['pk'])
-        queryset = self.get_queryset().filter(id__gt=pk)[0]
-        if queryset:
+        pk = self.kwargs['pk']
+        print('###############')
+        print(pk)
+        print('###############')
+        queryset = self.get_queryset().filter(id__gt=int(pk))[0]
+        print('###############')
+        print(queryset.id)
+        print('###############')
+        if queryset is not None:
             return queryset
-        else:
-            return self.get_queryset()[0]
+        return self.get_queryset()[0]
 
 
 class StatusDogView(UpdateAPIView):
     queryset = Dog.objects.all()
     serializer_class = DogSerializer
 
-    def put(self, *args, **kwargs):
+    def get_object(self):
         pk = self.kwargs['pk']
-        status = self.kwargs['status'][0]
-        dog_query = self.get_object().get(pk=pk)
-        UserDog.objects.get_or_create(
-            user=self.request.user,
-            dog=dog_query,
-            status=status
-        ).save()
-        serializer = DogSerializer(dog_query)
+        query = self.get_queryset().get(pk=pk)
+
+        if query:
+            return query
+        return Response(status=404)
+
+    def put(self, *args, **kwargs):
+        query = self.get_object()
+        print('###############')
+        print(query)
+        print('###############')
+        obj = UserDog.objects.filter(user=self.request.user, dog=query)
+        print('###############')
+        print(len(obj))
+        print('###############')
+        obj.status = self.kwargs['status'][0]
+        print('###############')
+        print(obj[0].status)
+        print('###############')
+        obj.save()
+        serializer = DogSerializer(query)
         return Response(serializer.data)
 
