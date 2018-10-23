@@ -2,21 +2,16 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-CHOICES = {
-    'age': (('b', 'baby'),
-            ('y', 'young'),
-            ('a', 'adult'),
-            ('s', 'senior')),
-    'gender': (('m', 'male'),
-               ('f', 'female')),
-    'size': (('s', 'small'),
-             ('m', 'medium'),
-             ('l', 'large'),
-             ('xl', 'extra large'))
-}
-
-
 class Dog(models.Model):
+    """Dog model
+    :inherit: - Model from django.db.models
+    :fields: - name - CharField
+             - image_filename - CharField
+             - breed - CharField
+             - age - IntegerField
+             - gender - CharField
+             - size - CharField
+    """
     name = models.CharField(max_length=100)
     image_filename = models.CharField(max_length=100)
     breed = models.CharField(max_length=100,
@@ -34,6 +29,12 @@ class Dog(models.Model):
 
 
 class UserDog(models.Model):
+    """UserDog model
+    :inherit: - Model from django.db.models
+    :fields: - user - ForeignKey(User)
+             - dog - ForeignKey(Dog)
+             - status - CharField
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     dog = models.ForeignKey(Dog, on_delete=models.CASCADE)
     status = models.CharField(
@@ -46,22 +47,26 @@ class UserDog(models.Model):
 
 
 class UserPref(models.Model):
+    """UserPref model
+    :inherit: - Model from django.db.models
+    :fields: - user - OneToOneField(User)
+             - age - CharField
+             - gender - CharField
+             - size - CharField
+    """
     user = models.OneToOneField(User,
                                 on_delete=models.CASCADE,
                                 related_name='preferences')
     age = models.CharField(
         default='b,y,a,s',
-        # choices=CHOICES['age'],
         max_length=7,
         help_text='[B]aby [Y]oung [A]dult [S]enior')
     gender = models.CharField(
         default='m,f',
-        # choices=CHOICES['gender'],
         max_length=3,
         help_text='"[M]ale [F]emale')
     size = models.CharField(
         default='s,m,l,xl',
-        # choices=CHOICES['size'],
         max_length=8,
         help_text='[S]mall [M]edium [L]arge [XL]arge')
 
