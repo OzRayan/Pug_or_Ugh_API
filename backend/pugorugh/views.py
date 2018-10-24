@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ObjectDoesNotExist
+# from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.generics import (CreateAPIView, RetrieveAPIView,
-                                     UpdateAPIView, RetrieveUpdateAPIView)
+                                     UpdateAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView)
 
 from .serializers import UserSerializer, DogSerializer, UserPrefSerializer
 from .models import Dog, UserDog, UserPref
@@ -29,6 +29,7 @@ class UserPrefView(RetrieveUpdateAPIView):
                 - serializer_class - UserPrefSerializer
     :method: - get_object()
     """
+    # noinspection PyUnresolvedReferences
     queryset = UserPref.objects.all()
     serializer_class = UserPrefSerializer
 
@@ -58,11 +59,13 @@ class NextDogView(RetrieveAPIView):
         """get_queryset method
         :return - dog queryset
         """
-        user = self.request.user
-        user_preferences = UserPref.objects.get(user=user)
         age_list = []
-        pref_age = user_preferences.age.split(',')
 
+        user = self.request.user
+        # noinspection PyUnresolvedReferences
+        user_preferences = UserPref.objects.get(user=user)
+
+        pref_age = user_preferences.age.split(',')
         if 'b' in pref_age:
             age_list.extend(list(range(0, 4)))
         if 'y' in pref_age:
@@ -72,31 +75,24 @@ class NextDogView(RetrieveAPIView):
         if 's' in pref_age:
             age_list.extend(list(range(61, 121)))
 
+        # noinspection PyUnresolvedReferences
         queries = Dog.objects.filter(
             age__in=age_list,
             gender__in=user_preferences.gender.split(','),
-            size__in=user_preferences.size.split(',')
-        )
+            size__in=user_preferences.size.split(','))
 
         for dog in queries:
+            # noinspection PyUnresolvedReferences
             obj, exists = UserDog.objects.get_or_create(
                 user=self.request.user,
                 dog=dog,
-                defaults={
-                    'user': self.request.user,
-                    'dog': dog,
-                    'status': 'u'
-                }
-            )
+                defaults={'user': self.request.user, 'dog': dog, 'status': 'u'})
             obj.save()
 
         status = self.kwargs['status'][0]
-        # print('############')
-        # print(self.kwargs['status'][0])
-        # print('############')
+
         queryset = queries.filter(userdog__user_id=user.id,
                                   userdog__status=status).order_by('pk')
-
         return queryset
 
     def get_object(self):
@@ -107,25 +103,23 @@ class NextDogView(RetrieveAPIView):
                     -first dog object
         """
         pk = self.kwargs['pk']
-        print('###############')
-        print(pk)
-        print('###############')
-        queryset = self.get_queryset()
-        print('###############')
-        print(len(queryset))
-        print('###############')
-        query = queryset.filter(id__gt=int(pk)).first()
+
+        query = self.get_queryset().filter(id__gt=int(pk)).first()
+
         if query:
             return query
         return self.get_queryset().first()
 
 
-class StatusDogView(UpdateAPIView):
+class StatusDogView(RetrieveUpdateDestroyAPIView):
+    # noinspection PyUnresolvedReferences
     queryset = Dog.objects.all()
     serializer_class = DogSerializer
 
     def get_object(self):
+
         pk = self.kwargs['pk']
+
         query = self.get_queryset().get(pk=pk)
 
         if query:
@@ -133,28 +127,19 @@ class StatusDogView(UpdateAPIView):
         return Response(status=404)
 
     def put(self, *args, **kwargs):
+
         query = self.get_object()
+
         status = self.kwargs['status'][0]
-        print('###############')
-        print(query)
-        print('###############')
+
+        # noinspection PyUnresolvedReferences
         obj, exists = UserDog.objects.get_or_create(
             user=self.request.user,
             dog=query,
-            defaults={
-                'user': self.request.user,
-                'dog': query,
-                'status': status
-            }
-        )
-        print('###############')
-        print(obj)
-        print('###############')
+            defaults={'user': self.request.user, 'dog': query, 'status': status})
+
         obj.status = status
-        print('###############')
-        print(obj.status)
-        print('###############')
         obj.save()
+
         serializer = DogSerializer(query)
         return Response(serializer.data)
-

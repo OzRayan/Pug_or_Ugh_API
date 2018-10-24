@@ -12,6 +12,7 @@ class Dog(models.Model):
              - gender - CharField
              - size - CharField
     """
+    # id = models.PositiveIntegerField()
     name = models.CharField(max_length=100)
     image_filename = models.CharField(max_length=100)
     breed = models.CharField(max_length=100,

@@ -149,5 +149,21 @@
     "age": 2,
     "gender": "f",
     "size": "m"
+  },
+  {
+    "name": "Tomika",
+    "image_filename": "20.jpg",
+    "breed": "Belgian Malinois mix",
+    "age": 51,
+    "gender": "m",
+    "size": "m"
+  },
+  {
+    "name": "Lucky",
+    "image_filename": "21.jpg",
+    "breed": "German Shepherd",
+    "age": 60,
+    "gender": "m",
+    "size": "l"
   }
 ]
