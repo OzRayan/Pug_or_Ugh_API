@@ -96,6 +96,7 @@ class NextDogView(RetrieveAPIView):
         # print('############')
         queryset = queries.filter(userdog__user_id=user.id,
                                   userdog__status=status).order_by('pk')
+
         return queryset
 
     def get_object(self):
@@ -106,20 +107,17 @@ class NextDogView(RetrieveAPIView):
                     -first dog object
         """
         pk = self.kwargs['pk']
-        # print('###############')
-        # print(pk)
-        # print('###############')
+        print('###############')
+        print(pk)
+        print('###############')
         queryset = self.get_queryset()
-        # print('###############')
-        # print(queryset.id)
-        # print('###############')
-        query = queryset.filter(id__gt=int(pk))[0]
-        if query is not None:
+        print('###############')
+        print(len(queryset))
+        print('###############')
+        query = queryset.filter(id__gt=int(pk)).first()
+        if query:
             return query
-        else:
-            if queryset[0] is None:
-                return Response(status=404)
-            return queryset[0]
+        return self.get_queryset().first()
 
 
 class StatusDogView(UpdateAPIView):
