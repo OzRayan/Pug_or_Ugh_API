@@ -76,7 +76,7 @@ class NextDogView(RetrieveAPIView):
             age__in=age_list,
             gender__in=user_preferences.gender.split(','),
             size__in=user_preferences.size.split(',')
-        ).order_by('pk')
+        )
 
         for dog in queries:
             obj, exists = UserDog.objects.get_or_create(
@@ -109,13 +109,17 @@ class NextDogView(RetrieveAPIView):
         # print('###############')
         # print(pk)
         # print('###############')
-        queryset = self.get_queryset().filter(id__gt=int(pk))[0]
+        queryset = self.get_queryset()
         # print('###############')
         # print(queryset.id)
         # print('###############')
-        if queryset is not None:
-            return queryset
-        return self.get_queryset()[0]
+        query = queryset.filter(id__gt=int(pk))[0]
+        if query is not None:
+            return query
+        else:
+            if queryset[0] is None:
+                return Response(status=404)
+            return queryset[0]
 
 
 class StatusDogView(UpdateAPIView):
