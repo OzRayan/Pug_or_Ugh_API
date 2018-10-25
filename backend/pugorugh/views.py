@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.generics import (CreateAPIView, RetrieveAPIView,
-                                     UpdateAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView)
+                                     UpdateAPIView, RetrieveUpdateAPIView)
 
 from .serializers import UserSerializer, DogSerializer, UserPrefSerializer
 from .models import Dog, UserDog, UserPref
@@ -81,6 +81,7 @@ class NextDogView(RetrieveAPIView):
             gender__in=user_preferences.gender.split(','),
             size__in=user_preferences.size.split(','))
 
+        # 
         for dog in queries:
             # noinspection PyUnresolvedReferences
             obj, exists = UserDog.objects.get_or_create(
@@ -111,7 +112,7 @@ class NextDogView(RetrieveAPIView):
         return self.get_queryset().first()
 
 
-class StatusDogView(RetrieveUpdateDestroyAPIView):
+class StatusDogView(UpdateAPIView):
     # noinspection PyUnresolvedReferences
     queryset = Dog.objects.all()
     serializer_class = DogSerializer
