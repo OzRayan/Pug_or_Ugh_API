@@ -1,4 +1,11 @@
 # Pug or Ugh
+## About
+A website built in Django REST Framework, connects to database
+with proper serialized models which will satisfy dog lovers and owners.
+The site offers a user interaction choosing preferred dogs.
+
+HTML, CSS, React was included in the project requirements,
+which of course was supplied by Treehouse.
 
 ## Requirements
 

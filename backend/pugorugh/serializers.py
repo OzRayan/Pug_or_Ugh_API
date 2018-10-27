@@ -59,4 +59,3 @@ class UserPrefSerializer(ModelSerializer):
             'size'
         )
         model = UserPref
-
