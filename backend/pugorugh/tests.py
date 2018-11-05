@@ -12,6 +12,11 @@ from .views import NextDogView, StatusDogView, UserPrefView, UserRegisterView
 
 
 class BaseTest(TestCase):
+    """BaseTest class for all tests
+    :inherit: -TestCase from django.test
+    dog_data: - dog info(json or dict) for testing
+    :method: - setUp()
+    """
     dog_data = {'name': 'Tomika',
                 'image_filename': 'pugorugh/static/images/dogs/20.jpg',
                 'breed': 'Belgian Malinois mix',
@@ -20,7 +25,12 @@ class BaseTest(TestCase):
                 'size': 'm'}
 
     def setUp(self):
-
+        """setUp method
+        self.user: - User object
+        self.user_pref: - UserPref object
+        self.dog: - Dog object created from dog_data
+        UserDog object
+        """
         # noinspection PyUnresolvedReferences
         self.user = User.objects.create_user(
             username='testuser',
@@ -52,10 +62,21 @@ class BaseTest(TestCase):
 
 
 class UserViewTest(BaseTest):
-
+    """UserView test
+    All test uses APIRequestFactory() class from rest_framework.test
+    :inherit: - BaseTest
+    response_data - userpref data (json or dict)
+    :methods: - test_user_register()
+              - test_getUserPrefView()
+              - test_putUserPrefView()
+    """
     response_data = {'age': 'b', 'gender': 'm', 'size': 'm'}
 
     def test_user_register(self):
+        """Test_user_register
+        :request: - post using factory
+        :test: - status code 201
+        """
         factory = APIRequestFactory()
         request = factory.post(
             reverse('register-user'),
@@ -66,6 +87,10 @@ class UserViewTest(BaseTest):
         self.assertEqual(response.status_code, 201)
 
     def test_getUserPrefView(self):
+        """Test_getUserPrefView
+        :request: - get using factory
+        :test: - status code 200
+        """
         factory = APIRequestFactory()
         request = factory.get(reverse('preferences'))
         force_authenticate(request, user=self.user)
@@ -75,6 +100,11 @@ class UserViewTest(BaseTest):
         self.assertEqual(response.status_code, 200)
 
     def test_putUserPrefView(self):
+        """Test_putUserPrefView
+        :request: - put using factory
+        :test: - status code 200
+               - response data == self.response_data(defined in class)
+        """
         factory = APIRequestFactory()
         request = factory.put(reverse('preferences'), self.response_data)
         force_authenticate(request, user=self.user)
@@ -86,7 +116,16 @@ class UserViewTest(BaseTest):
 
 
 class NextDogViewTest(BaseTest):
+    """NextDogView test
+    Test uses APIRequestFactory() class from rest_framework.test
+    :inherit: - BaseTest
+    :methods: - test_getNextDogView()
+    """
     def test_getNextDogView(self):
+        """Test_getNextDogView
+        :request: - get using factory
+        :test: - status code 200
+        """
         factory = APIRequestFactory()
         request = factory.get(reverse('next', kwargs={'pk': 1, 'status': 'liked'}))
         force_authenticate(request, user=self.user)
@@ -97,7 +136,16 @@ class NextDogViewTest(BaseTest):
 
 
 class StatusDogViewTest(BaseTest):
-    def test_getGetDogView(self):
+    """StatusDogView test
+    Test uses APIRequestFactory() class from rest_framework.test
+    :inherit: - BaseTest
+    :methods: - test_getDogView()
+    """
+    def test_getDogView(self):
+        """Test_getDogView
+        :request: - put using factory
+        :test: - status code 200
+        """
         factory = APIRequestFactory()
         request = factory.put(reverse('status', kwargs={'pk': 1, 'status': 'undecided'}))
         force_authenticate(request, user=self.user)
