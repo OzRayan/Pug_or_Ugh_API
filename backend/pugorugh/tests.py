@@ -131,6 +131,7 @@ class NextDogViewTest(BaseTest):
         """Test_getNextDogView
         :request: - get using factory
         :test: - status code 200
+               - response data
         """
         factory = APIRequestFactory()
         request = factory.get(reverse('next', kwargs={'pk': -1, 'status': 'liked'}))
@@ -152,6 +153,7 @@ class StatusDogViewTest(BaseTest):
         """Test_getDogView
         :request: - put using factory
         :test: - status code 200
+               - response data
         """
         factory = APIRequestFactory()
         request = factory.put(reverse('status', kwargs={'pk': 1, 'status': 'liked'}))
