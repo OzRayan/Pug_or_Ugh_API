@@ -76,6 +76,7 @@ class UserViewTest(BaseTest):
         """Test_user_register
         :request: - post using factory
         :test: - status code 201
+               - response data
         """
         factory = APIRequestFactory()
         request = factory.post(
@@ -85,11 +86,13 @@ class UserViewTest(BaseTest):
 
         response = view(request)
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data.get('username'), 'testuser2')
 
     def test_getUserPrefView(self):
         """Test_getUserPrefView
         :request: - get using factory
         :test: - status code 200
+               - response data
         """
         factory = APIRequestFactory()
         request = factory.get(reverse('preferences'))
@@ -98,6 +101,9 @@ class UserViewTest(BaseTest):
 
         response = view(request)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data.get('age'), 'b,y,a,s')
+        self.assertEqual(response.data.get('gender'), 'm,f')
+        self.assertEqual(response.data.get('size'), 's,m,l,xl')
 
     def test_putUserPrefView(self):
         """Test_putUserPrefView
@@ -127,12 +133,13 @@ class NextDogViewTest(BaseTest):
         :test: - status code 200
         """
         factory = APIRequestFactory()
-        request = factory.get(reverse('next', kwargs={'pk': 1, 'status': 'liked'}))
+        request = factory.get(reverse('next', kwargs={'pk': -1, 'status': 'liked'}))
         force_authenticate(request, user=self.user)
         view = NextDogView.as_view()
 
-        response = view(request, pk=1, status='liked')
+        response = view(request, pk=-1, status='undecided')
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data.get('name'), 'Tomika')
 
 
 class StatusDogViewTest(BaseTest):
@@ -147,9 +154,10 @@ class StatusDogViewTest(BaseTest):
         :test: - status code 200
         """
         factory = APIRequestFactory()
-        request = factory.put(reverse('status', kwargs={'pk': 1, 'status': 'undecided'}))
+        request = factory.put(reverse('status', kwargs={'pk': 1, 'status': 'liked'}))
         force_authenticate(request, user=self.user)
         view = StatusDogView.as_view()
 
-        response = view(request, pk=1, status='undecided')
+        response = view(request, pk=1, status='liked')
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data.get('name'), 'Tomika')
