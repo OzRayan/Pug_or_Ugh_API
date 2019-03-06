@@ -28,6 +28,7 @@ class UserSerializer(ModelSerializer):
         return user
 
     class Meta:
+        fields = '__all__'
         model = get_user_model()
 
 
@@ -36,15 +37,7 @@ class DogSerializer(ModelSerializer):
     :inherit: - ModelSerializer from rest_framework.serializers
     """
     class Meta:
-        fields = (
-            'id',
-            'name',
-            'image_filename',
-            'breed',
-            'age',
-            'gender',
-            'size'
-        )
+        fields = '__all__'
         model = Dog
 
 
@@ -53,9 +46,5 @@ class UserPrefSerializer(ModelSerializer):
     :inherit: - ModelSerializer from rest_framework.serializers
     """
     class Meta:
-        fields = (
-            'age',
-            'gender',
-            'size'
-        )
+        fields = '__all__'
         model = UserPref

@@ -1,5 +1,10 @@
+certifi==2018.11.29
 coverage==4.0.3
-Django==1.11.18
+Django==2.1.7
 django-debug-toolbar==1.9.1
-djangorestframework==3.4.1
+djangorestframework==3.9.2
+pipenv==2018.11.26
+pytz==2018.9
 sqlparse==0.2.4
+virtualenv==16.4.3
+virtualenv-clone==0.5.1
